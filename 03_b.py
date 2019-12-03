@@ -20,10 +20,8 @@ def get_direction(d):
         return 1, 0
 
 
-path = []
-near = 9999999
-
-
+path = ["start"]
+near = 9999999999
 wires = read_input()
 
 print('First wire')
@@ -38,16 +36,16 @@ with progressbar.ProgressBar(len(steps)) as bar:
         for i in range(q):
             x += dx
             y += dy
-            point = str(x) + "-" + str(y)
-            if point not in path:
-                path.append(point)
-            bar.update()
+            point = str(x) + "|" + str(y)
+            path.append(point)
+        bar.update()
 
 print('Second wire')
 wire = wires[1]
 x = 0
 y = 0
 steps = wire.split(sep=',')
+n_move = 0
 with progressbar.ProgressBar(len(steps)) as bar:
     for step in steps:
         q = int(step[1:])
@@ -55,12 +53,13 @@ with progressbar.ProgressBar(len(steps)) as bar:
         for i in range(q):
             x += dx
             y += dy
-            point = str(x) + "-" + str(y)
+            n_move += 1
+            point = str(x) + "|" + str(y)
             if point in path:
-                if abs(x) + abs(y) < near:
-                    near = abs(x) + abs(y)
-            else:
-                path.append(point)
-            bar.update()
+                way = n_move + path.index(point)
+                print(way)
+                if way < near:
+                    near = way
+        bar.update()
 
 print(near)
