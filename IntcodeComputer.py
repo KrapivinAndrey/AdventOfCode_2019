@@ -7,7 +7,7 @@ class IntComputer:
 
         self.in_val = 0
         self.out_val = 0
-        self.state = 0
+        self.init_state = True
 
     def __prepare_comm(self):
         comm = self.commands[self.step]
@@ -50,8 +50,8 @@ class IntComputer:
 
             elif comm[0] == 3:
                 pos = self.commands[self.step + 1]
-                self.commands[pos] = self.init_val if self.state == 0 else self.in_val
-                self.state = 1
+                self.commands[pos] = self.init_val if self.init_state else self.in_val
+                self.init_state = False
 
                 self.step += 2
 

@@ -25,8 +25,8 @@ signal = 0
 
 for case in cases:
 
-    amp_a = IntcodeComputer.IntComputer(commands.copy(), 0)
-    amp_a.set_input(case[0])
+    amp_a = IntcodeComputer.IntComputer(commands.copy(), case[0])
+    amp_a.set_input(0)
     amp_b = IntcodeComputer.IntComputer(commands.copy(), case[1])
     amp_c = IntcodeComputer.IntComputer(commands.copy(), case[2])
     amp_d = IntcodeComputer.IntComputer(commands.copy(), case[3])

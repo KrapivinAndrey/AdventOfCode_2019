@@ -9,8 +9,7 @@ def read_input():
     return res
 
 
-IntcodeComputer.commands = [int(i) for i in read_input()[0].split(sep=',')]
-IntcodeComputer.in_values = [8]
+comp = IntcodeComputer.IntComputer([int(i) for i in read_input()[0].split(sep=',')], 10)
 
-print(IntcodeComputer.run_program())
-
+comp.run_program()
+print(comp.out_val)
