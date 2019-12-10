@@ -2,31 +2,6 @@ import my
 import math
 
 
-class Vect:
-
-    def __init__(self, a, b):
-        self.a = a
-        self.b = b
-
-    def findClockwiseAngle(self, other):
-    # using cross-product formula
-        res = -math.degrees(math.asin((self.a * other.b - self.b * other.a)/(self.length()*other.length())))
-        # if other.a > 0 and other.b < 0:
-        #     res = res + 0
-        # elif other.a > 0 and other.b > 0:
-        #     res = res + 90
-        # elif other.a < 0 and other.b > 0:
-        # res = res + 180
-        # elif other.a < 0 and other.b < 0:
-        return res
-
-
-    def length(self):
-        return math.sqrt(self.a**2 + self.b**2)
-
-    def show(self):
-        print(str(self.a+28) + "|" + str(self.b+29))
-
 def nod(x, y):
 
     a = abs(x)
@@ -90,3 +65,4 @@ for i in range(width):
             max_count = m
             aster = [i, j]
 print(aster)
+print(max_count)
