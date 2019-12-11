@@ -79,7 +79,7 @@ class IntComputer:
                 pos = self.__get_param(1, comm)
                 self.out_val = pos
                 self.step += 2
-                print(pos, end=", ")
+                # print(pos, end=", ")
                 return "output"
 
             elif comm[0] == 5:
