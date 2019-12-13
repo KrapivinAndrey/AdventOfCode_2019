@@ -10,6 +10,9 @@ class IntComputer:
 
         self.in_val = 0
         self.out_val = 0
+        self.user_input = False
+        self.pause_input = False
+        self.state_input = 0
 
         self.relative_base = 0
 
@@ -38,6 +41,7 @@ class IntComputer:
 
     def set_input(self, in_val):
         self.in_val = in_val
+        self.state_input = 2
 
     def run_program(self):
 
@@ -67,10 +71,24 @@ class IntComputer:
                 self.step += 4
 
             elif comm[0] == 3:
+
+                if self.pause_input:
+                    if self.state_input == 0:
+                        self.state_input = 1
+                        return "input"
+                    if self.state_input == 1:
+                        return "Await for input"
+                    else:
+                        self.state_input = 0
+
                 pos = self.commands[self.step + 1]
                 if comm[1] == 2:
                     pos = pos + self.relative_base
-                self.commands[pos] = self.init_val if self.init_state else self.in_val
+                if self.user_input:
+                    val = int(input())
+                else:
+                    val = self.init_val if self.init_state else self.in_val
+                self.commands[pos] = val
                 self.init_state = False
 
                 self.step += 2
