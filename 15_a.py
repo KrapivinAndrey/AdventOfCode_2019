@@ -15,13 +15,15 @@ N = 1
 S = 2
 W = 3
 E = 4
-
+possible_direction = [N, E, S, W]
 
 class Coordinate:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
+    def __str__(self):
+        return str(self.x) + "|" + str(self.y)
 
 class RobotMap:
 
@@ -71,7 +73,6 @@ class Robot:
         self.pos = Coordinate(0, 0)
         self.map = RobotMap()
         self.path = []
-        self.possible_direction = [N, E, S, W]
 
     def get_coordinate(self, dir):
         if dir == N:
@@ -106,7 +107,7 @@ class Robot:
         return self.map.get(self.get_coordinate(direction))
 
     def get_next_move(self):
-        for direction in self.possible_direction:
+        for direction in possible_direction:
             if self.what_at_map(direction) == UNKNOWN:
                 return direction
         self.path.pop()  # забыли последнюю позицию
@@ -148,5 +149,37 @@ while ans != 'finish':
 
 repair_robot.map.print()
 
-map = repair_robot.map.xy
 
+def get_coordinate(pos:Coordinate, dir):
+    if dir == N:
+        res = Coordinate(pos.x, pos.y + 1)
+    elif dir == S:
+        res = Coordinate(pos.x, pos.y - 1)
+    elif dir == W:
+        res = Coordinate(pos.x - 1, pos.y)
+    elif dir == E:
+        res = Coordinate(pos.x + 1, pos.y)
+    return res
+
+map = repair_robot.map
+
+queue = [str(oxygen_station)]
+next_tour = [oxygen_station]
+Work = True
+deep = 0
+
+while Work:
+    Work = False
+    temp = []
+    for vertex in next_tour:
+        for direction in possible_direction:
+            pos = get_coordinate(vertex, direction)
+            if str(pos) not in queue and map.get(pos) in [OXYGEN, FREE, MY_PLACE]:
+                temp.append(pos)
+                queue.append(str(pos))
+    if len(temp) != 0:
+        deep += 1
+        Work = True
+    next_tour = temp.copy()
+
+print(deep)
