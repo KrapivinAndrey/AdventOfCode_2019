@@ -1,6 +1,5 @@
 import my
 import IntcodeComputer
-from time import sleep
 
 
 def cls(): print("\n" * 100)
@@ -117,6 +116,7 @@ class Robot:
         return self.get_direction_to(new_pos)
 
 
+
 in_commands = [int(i) for i in my.read_input()[0].split(sep=',')]
 
 comp = IntcodeComputer.IntComputer(in_commands)
@@ -125,6 +125,8 @@ ans = ''
 prev_dir = 0
 repair_robot = Robot()
 i = 0
+
+start = Coordinate(0, 0)
 while ans != 'finish':
 
     ans = comp.run_program()
@@ -141,12 +143,10 @@ while ans != 'finish':
         repair_robot.update_map(prev_dir, comp.out_val)
         if comp.out_val != WALL:
             repair_robot.move(prev_dir)
-
-    if i % 1000 == 0:
-        cls()
-
-        sleep(1)
-    i += 1
+        if comp.out_val == OXYGEN:
+            oxygen_station = repair_robot.pos
 
 repair_robot.map.print()
-print('Back home')
+
+map = repair_robot.map.xy
+
