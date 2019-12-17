@@ -184,3 +184,47 @@ print(i)
 # B R10R10L4
 # C R4L4L10L10
 
+main = "A,B,A,C,A,B,C,B,C,B"
+A = "R,10,R,10,R,6,R,4"
+B = "R,10,R,10,L,4"
+C = "R,4,L,4,L,10,L,10"
+
+
+def ascii_input(in_str):
+    temp = list(map(lambda x: ord(x), in_str))
+    temp.append(10)
+    return temp
+
+
+in_commands_new = in_commands.copy()
+in_commands_new[0] = 2
+comp = IntcodeComputer.IntComputer(in_commands_new)
+comp.pause_input = True
+ans = comp.run_program()
+while ans == 'output':
+    ans = comp.run_program()
+
+for program in [main, A, B, C]:
+
+    for el in ascii_input(program):
+        comp.set_input(el)
+        ans = comp.run_program()
+    while ans == 'output':
+        print(chr(comp.out_val), end='')
+        ans = comp.run_program()
+
+
+# отказ от вывода
+ans = comp.run_program()
+comp.set_input(110)
+ans = comp.run_program()
+comp.set_input(10)
+while ans == 'output':
+    print(chr(comp.out_val), end='')
+    ans = comp.run_program()
+
+ans = comp.run_program()
+while ans != 'finish':
+    ans = comp.run_program()
+
+print(comp.out_val)
