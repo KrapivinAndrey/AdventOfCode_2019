@@ -10,7 +10,7 @@ L = 3
 R = 4
 possible_direction = [U, R, D, L]
 
-sym_dir = ['', 'U', 'D', 'L', 'R']
+sym_dir = [1, 4, 2, 3]
 UNKNOWN = 0
 SCAFFOLD = 1
 SPACE = 2
@@ -109,25 +109,13 @@ class Robot:
         return self.map.get(self.get_coordinate(direction))
 
     def get_next_move(self):
-        old_way = -1
-        new_way = -1
         for direction in possible_direction:
-            if self.what_at_map(direction) == SCAFFOLD:
-                new_way = direction
-            elif self.what_at_map(direction) in (MY_PATH, CROSS):
-                old_way = direction
-
-        if new_way == -1:
-            if old_way == -1:
-                return 'no way'
-            else:
-                return old_way
-        else:
-            return new_way
+            if self.what_at_map(direction) in (SCAFFOLD, MY_PATH):
+                return direction
+        return 'no way'
 
 
 in_commands = [int(i) for i in my.read_input()[0].split(sep=',')]
-
 comp = IntcodeComputer.IntComputer(in_commands)
 
 comp.pause_input = False
@@ -152,7 +140,7 @@ while ans != 'finish':
             i = 0
             j += 1
         else:
-            print(">", end='')
+            print("^", end='')
             robot.pos = Coordinate(i,j)
             robot.map.put(robot.pos, 3)
             i += 1
@@ -165,21 +153,34 @@ def get_opposite(direction):
         return [L, R]
 
 
+def turn(old, new):
+    if (old == U and new == R) or (old == R and new == D) or (old == D and new == L) or (old == L and new == U):
+        return "R"
+    else:
+        return "L"
+
 dir = U
-crosses = []
+dir_old = U
+i = 0
 while True:
 
     next_turn = robot.what_at_map(dir)
-    if next_turn == SCAFFOLD:
-        robot.update_map(dir, MY_PATH)
+    if next_turn in (SCAFFOLD, MY_PATH):
         robot.move(dir)
-    elif next_turn == MY_PATH:
-        robot.update_map(dir, CROSS)
-        crosses.append(robot.get_coordinate(dir))
-        robot.move(dir)
+        i += 1
     elif next_turn in (SPACE, UNKNOWN):
+        dir_old = dir
         possible_direction = get_opposite(dir)
         dir = robot.get_next_move()
         if dir == 'no way':
             break
+        print(i,)
+        i = 0
+        print(turn(dir_old, dir),end='')
+print(i)
+
+# ABACABCBCB
+# A R10R10R6R4
+# B R10R10L4
+# C R4L4L10L10
 
