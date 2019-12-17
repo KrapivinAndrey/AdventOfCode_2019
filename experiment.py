@@ -1,7 +1,5 @@
-from functools import reduce
+import numpy as np
 
-in_str = '98765'
-print(list(enumerate(list(in_str))))
+a = np.array([[0, 0], [1, 0]])
 
-res = reduce(lambda a, x: a + int(x[1])*x[0], list(enumerate(list(in_str))), 0)
-print(res)
+print(a.)
