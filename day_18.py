@@ -1,5 +1,10 @@
 import my
 
+in_data = my.read_input()
+
+width = len(in_data[0])
+height = len(in_data)
+
 
 class Coordinate:
     def __init__(self, x, y):
@@ -10,93 +15,57 @@ class Coordinate:
 class Labirint:
     def __init__(self, matrix):
         self.lab = matrix.copy()
+        self.adj = []
+        self.__adj()
 
+    def open_door(self, key):
+        for i in range(width):
+            self.lab[i] = list(map(lambda k: 0 if k == key else k, self.lab[i]))
+        self.__adj()
+
+    def __adj(self):
         res = []
-        for i in range(len(mazze) * len(mazze[0])):
+        for i in range(width * height):
             x = i % width
             y = i // width
 
             a = []
-            if mazze[x][y] == 0:  # свободное
-                if y > 0 and mazze[x][y - 1] == 0:
+            if self.lab[x][y] == 0:  # свободное
+                if y > 0 and self.lab[x][y - 1] == 0:
                     a.append(i - width)
-                if y < (len(mazze[x]) - 1) and mazze[x][y + 1] == 0:
+                if y < (height - 1) and self.lab[x][y + 1] == 0:
                     a.append(i + width)
-                if x > 0 and mazze[x - 1][y] == 0:
+                if x > 0 and self.lab[x - 1][y] == 0:
                     a.append(i - 1)
-                if x < (len(mazze) - 1) and mazze[x + 1][y] == 0:
+                if x < (width - 1) and self.lab[x + 1][y] == 0:
                     a.append(i + 1)
             res.append(a)
 
         self.adj = res
 
-    def open_door(self, key):
-        for i in range(width):
-            self.lab[i] = list(map(lambda k: 0 if k == key else k, self.lab[i]))
-
-    @staticmethod
-    def __start_wave(pathArr):
-        weight = 1
-        for i in range(len(pathArr) * len(pathArr[0])):
-            weight += 1
-            for x in range(len(pathArr)):
-                for y in range(len(pathArr[x])):
-                    if pathArr[x][y] == (weight - 1):
-                        if y > 0 and pathArr[x][y - 1] == 0:
-                            pathArr[y - 1][x] = weight
-                        if y < (len(pathArr[x]) - 1) and pathArr[x][y + 1] == 0:
-                            pathArr[x][y + 1] = weight
-                        if x > 0 and pathArr[x - 1][y] == 0:
-                            pathArr[x - 1][y] = weight
-                        if x < (len(pathArr) - 1) and pathArr[x + 1][y] == 0:
-                            pathArr[x + 1][y] = weight
-
-    @staticmethod
-    def __found(pathArr, finPoint:Coordinate):
-        return pathArr[finPoint.x][finPoint.y] > 0
-
-    @staticmethod
-    def __printPath(pathArr, finPoint:Coordinate):
-        x = finPoint.x
-        y = finPoint.y
-        weight = pathArr[x][y]
-        result = list(range(weight))
-        while (weight):
-            weight -= 1
-            if y < height - 1 and pathArr[x][y + 1] == weight:
-                y += 1
-                result[weight] = 'down'
-            elif y > 0 and pathArr[x][y - 1] == weight:
-                result[weight] = 'up'
-                y -= 1
-            elif x < width - 1 and pathArr[x + 1][y] == weight:
-                result[weight] = 'right'
-                x += 1
-            elif x > 0 and pathArr[x - 1][y] == weight:
-                result[weight] = 'left'
-                x -= 1
-
-        return result[1:]
+    def bfs(self, s):
+        level = [-1] * len(self.adj)
+        level[s.x * width + s.y] = 0
+        # уровень начальной вершины
+        queue = [s.x * width + s.y]
+        # добавляем начальную вершину в очередь
+        while queue:
+            # пока там что-то есть
+            v = queue.pop(0)
+            # извлекаем вершину
+            for w in self.adj[v]:
+                # запускаем обход из вершины v
+                if level[w] is -1:
+                    # проверка на посещенность
+                    queue.append(w)
+                    # добавление вершины в очередь
+                    level[w] = level[v] + 1
+        return level
 
     def reachable_keys(self, start:Coordinate, keys):
-        path = [[y if y == 0 else -1 for y in x] for x in self.lab]
-        path[start.x][start.y] = 1
-        self.__start_wave(path)
-        return list(map(lambda point: (point, path[point[1].x][point[1].y]), filter(lambda elem: self.__found(path, elem[1]), keys.items())))
-
-    def length_path(self, start:Coordinate, finish:Coordinate):
-        temp_map = self.lab.copy()
-        path = [[y if y == 0 else -1 for y in x] for x in temp_map]
-        path[start.x][start.y] = 1
-        if self.__found(path, finish):
-            return path[finish.x][finish.y]
-        else:
-            return -1
-
-in_data = my.read_input()
-
-width = len(in_data[0])
-height = len(in_data)
+        level = self.bfs(start)
+        return list(map(lambda point: (point, level[point[1].x*width + point[1].y]),
+                    filter(lambda elem: level[elem[1].x*width + elem[1].y] != -1, keys.items())))
 
 
 lab = [[0 for x in range(height)] for y in range(width)]
