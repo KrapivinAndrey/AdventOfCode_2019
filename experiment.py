@@ -1,3 +1,5 @@
-a = list(range(4))
-a = list(map(lambda x: 0 if x==1 else x, a))
-print(a)
+from functools import reduce
+
+a = list(range(5))
+s = reduce(lambda a,x:a+str(x),list(range(5)),'')
+print(s)
