@@ -1,4 +1,5 @@
 import my
+from threading import Thread
 
 in_data = my.read_input()
 
@@ -45,9 +46,9 @@ class Labirint:
 
     def bfs(self, s):
         level = [-1] * len(self.adj)
-        level[s.x * width + s.y] = 0
+        level[s.x + s.y * width] = 0
         # уровень начальной вершины
-        queue = [s.x * width + s.y]
+        queue = [s.x + s.y * width]
         # добавляем начальную вершину в очередь
         while queue:
             # пока там что-то есть
@@ -64,8 +65,8 @@ class Labirint:
 
     def reachable_keys(self, start:Coordinate, keys):
         level = self.bfs(start)
-        return list(map(lambda point: (point, level[point[1].x*width + point[1].y]),
-                    filter(lambda elem: level[elem[1].x*width + elem[1].y] != -1, keys.items())))
+        return list(map(lambda point: (point, level[point[1].x + point[1].y*width]),
+                    filter(lambda elem: level[elem[1].x + elem[1].y*width] != -1, keys.items())))
 
 
 lab = [[0 for x in range(height)] for y in range(width)]
@@ -87,7 +88,7 @@ for j in range(height):
         elif sym.isupper():
             lab[i][j] = sym.lower()
 
-min_path = 99999999
+min_path = 9999999999999999999999
 
 my_puzzle = Labirint(lab)
 
@@ -100,11 +101,10 @@ def analyze_all_reachable_keys(new_puzzle: object, new_point: Coordinate, new_ke
     elif len(new_keys.keys()) == 0:
         if _len < min_path:
             min_path = _len
+            print('get {}'.format(min_path))
         return
 
     for reach_key in new_puzzle.reachable_keys(new_point, new_keys):
-
-        print("{}>{}".format("-" * len(new_keys),reach_key[0][0]))
 
         new_new_puzzle = Labirint(new_puzzle.lab)
         new_new_puzzle.open_door(reach_key[0][0])
@@ -115,5 +115,21 @@ def analyze_all_reachable_keys(new_puzzle: object, new_point: Coordinate, new_ke
         analyze_all_reachable_keys(new_new_puzzle, new_new_point, new_new_keys, _len + reach_key[1])
 
 
-analyze_all_reachable_keys(my_puzzle, start, keys, 0)
+my_thread = []
 
+for reach_key in my_puzzle.reachable_keys(start, keys):
+
+    new_new_puzzle = Labirint(my_puzzle.lab)
+    new_new_puzzle.open_door(reach_key[0][0])
+
+    new_point = reach_key[0][1]
+    new_keys = keys.copy()
+    new_keys.pop(reach_key[0][0])
+    temp = Thread(target=analyze_all_reachable_keys, args=(new_new_puzzle, new_point, new_keys, reach_key[1]))
+    temp.start()
+    my_thread.append(temp)
+
+for temp in my_thread:
+    temp.join()
+
+print(min_path)
