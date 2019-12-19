@@ -2,7 +2,7 @@ class IntComputer:
 
     def __init__(self, init_commands):
         self.commands = init_commands.copy()
-        for i in range(100000):
+        for i in range(1000):
             self.commands.append(0)
         self.init_val = 0
         self.init_state = False

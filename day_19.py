@@ -18,7 +18,7 @@ def get_pull(a,b):
     comp.set_input(b)
     ans = comp.run_program()
     ans = comp.run_program()
-    return str(comp.out_val)
+    return comp.out_val
 
 
 def get_row(y):
@@ -31,20 +31,30 @@ def get_board(row):
     x2 = row.find('0', x1)
     return (x1, x2)
 
-y_start = 1100
+
+first_col = 3
+last_col = 4
+first_cols = {}
+last_cols = {}
+size = 100
+y = 5
+
 
 while True:
-    print(y_start)
-    up = get_row(y_start)
-    down = get_row(y_start + 100)
-    b1 = get_board(up)
-    b2 = get_board(down)
-    if  b2[0] + 100 <= b1[1] or \
-        b1[0] - 100 >= b2[0]:
+    print(y)
+    output = get_pull(first_col, y)
+    if output == 0:
+        first_col += 1
+    output = get_pull(last_col, y)
+    if output == 1:
+        last_col += 1
+    first_cols[y%size] = first_col
+    last_cols[y%size] = last_col
+    y += 1
+    if min(last_cols.values()) - max(first_cols.values()) >=size:
         break
-    y_start += 1
 
-print(up)
-print(down)
-print(b2[0])
-print(y_start)
+px = min(last_cols.values())-size
+py = y - size
+
+print(px*10000+py)

@@ -96,7 +96,7 @@ my_puzzle = Labirint(lab)
 def analyze_all_reachable_keys(new_puzzle: object, new_point: Coordinate, new_keys: object, _len: int) -> object:
     global min_path
 
-    if _len > min_path:
+    if _len > min(5102, min_path):
         return
     elif len(new_keys.keys()) == 0:
         if _len < min_path:
